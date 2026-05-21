@@ -24,31 +24,45 @@ class DashboardService {
   }
 
   Future<List<Map<String, dynamic>>> getRecentPlaces({int limit = 5}) async {
-    final snap = await _db
-        .collection(AppConfig.colPlaces)
-        .orderBy('createdAt', descending: true)
-        .limit(limit)
-        .get();
-    return snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
+    final snap = await _db.collection(AppConfig.colPlaces).limit(limit * 3).get();
+    final docs = snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
+    docs.sort((a, b) {
+      final aTs = a['createdAt'];
+      final bTs = b['createdAt'];
+      if (aTs == null && bTs == null) return 0;
+      if (aTs == null) return 1;
+      if (bTs == null) return -1;
+      return (bTs as dynamic).compareTo(aTs);
+    });
+    return docs.take(limit).toList();
   }
 
   Future<List<Map<String, dynamic>>> getRecentUsers({int limit = 5}) async {
-    final snap = await _db
-        .collection(AppConfig.colUsers)
-        .orderBy('createdAt', descending: true)
-        .limit(limit)
-        .get();
-    return snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
+    final snap = await _db.collection(AppConfig.colUsers).limit(limit * 3).get();
+    final docs = snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
+    docs.sort((a, b) {
+      final aTs = a['createdAt'];
+      final bTs = b['createdAt'];
+      if (aTs == null && bTs == null) return 0;
+      if (aTs == null) return 1;
+      if (bTs == null) return -1;
+      return (bTs as dynamic).compareTo(aTs);
+    });
+    return docs.take(limit).toList();
   }
 
   Future<List<Map<String, dynamic>>> getTopRatedPlaces({int limit = 5}) async {
     final snap = await _db
         .collection(AppConfig.colPlaces)
         .where('isActive', isEqualTo: true)
-        .orderBy('rating', descending: true)
-        .limit(limit)
         .get();
-    return snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
+    final docs = snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
+    docs.sort((a, b) {
+      final aR = (a['rating'] as num?)?.toDouble() ?? 0;
+      final bR = (b['rating'] as num?)?.toDouble() ?? 0;
+      return bR.compareTo(aR);
+    });
+    return docs.take(limit).toList();
   }
 
   Future<List<Map<String, dynamic>>> getPlacesByState() async {

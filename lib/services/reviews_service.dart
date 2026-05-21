@@ -6,13 +6,14 @@ class ReviewsService {
   final _col = FirebaseFirestore.instance.collection(AppConfig.colReviews);
 
   Stream<List<Review>> watchAll() => _col
-      .orderBy('createdAt', descending: true)
       .snapshots()
       .map((s) => s.docs.map(Review.fromFirestore).toList());
 
   Future<List<Review>> getAll() async {
-    final snap = await _col.orderBy('createdAt', descending: true).get();
-    return snap.docs.map(Review.fromFirestore).toList();
+    final snap = await _col.get();
+    final reviews = snap.docs.map(Review.fromFirestore).toList();
+    reviews.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return reviews;
   }
 
   Future<List<Review>> getFlagged() async {

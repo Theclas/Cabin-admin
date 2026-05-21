@@ -6,13 +6,14 @@ class UsersService {
   final _col = FirebaseFirestore.instance.collection(AppConfig.colUsers);
 
   Stream<List<AppUser>> watchAll() => _col
-      .orderBy('createdAt', descending: true)
       .snapshots()
       .map((s) => s.docs.map(AppUser.fromFirestore).toList());
 
   Future<List<AppUser>> getAll() async {
-    final snap = await _col.orderBy('createdAt', descending: true).get();
-    return snap.docs.map(AppUser.fromFirestore).toList();
+    final snap = await _col.get();
+    final users = snap.docs.map(AppUser.fromFirestore).toList();
+    users.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return users;
   }
 
   Future<AppUser?> getById(String id) async {

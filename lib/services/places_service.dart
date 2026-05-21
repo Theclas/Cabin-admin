@@ -6,13 +6,14 @@ class PlacesService {
   final _col = FirebaseFirestore.instance.collection(AppConfig.colPlaces);
 
   Stream<List<Place>> watchAll() => _col
-      .orderBy('createdAt', descending: true)
       .snapshots()
       .map((s) => s.docs.map(Place.fromFirestore).toList());
 
   Future<List<Place>> getAll() async {
-    final snap = await _col.orderBy('createdAt', descending: true).get();
-    return snap.docs.map(Place.fromFirestore).toList();
+    final snap = await _col.get();
+    final places = snap.docs.map(Place.fromFirestore).toList();
+    places.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return places;
   }
 
   Future<Place?> getById(String id) async {
