@@ -214,9 +214,7 @@ class _UsersScreenState extends State<UsersScreen> {
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_vert, size: 18, color: AppColors.textSecondary),
       color: AppColors.card,
-      itemBuilder: (_) => AppConfig.mexicoStates.isEmpty
-          ? []
-          : ['user', 'moderator', 'admin', 'superadmin']
+      itemBuilder: (_) => ['user', 'moderator', 'admin', 'superadmin']
               .map((r) => PopupMenuItem(
                     value: r,
                     child: Text('Cambiar a $r'),

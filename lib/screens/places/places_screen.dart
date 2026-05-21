@@ -65,7 +65,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
           child: TextField(
             onChanged: p.setSearch,
             decoration: InputDecoration(
-              hintText: 'Buscar por nombre, ciudad o estado...',
+              hintText: 'Buscar por nombre, ciudad o provincia...',
               prefixIcon: const Icon(Icons.search, size: 18),
               isDense: true,
               contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -78,12 +78,12 @@ class _PlacesScreenState extends State<PlacesScreen> {
         const SizedBox(width: 12),
         DropdownButton<String>(
           value: p.filterState.isEmpty ? null : p.filterState,
-          hint: const Text('Estado', style: TextStyle(color: AppColors.textHint)),
+          hint: const Text('Provincia', style: TextStyle(color: AppColors.textHint)),
           dropdownColor: AppColors.card,
           underline: const SizedBox(),
           items: [
-            const DropdownMenuItem(value: '', child: Text('Todos los estados')),
-            ...AppConfig.mexicoStates.map(
+            const DropdownMenuItem(value: '', child: Text('Todas las provincias')),
+            ...AppConfig.dominicanaProvinces.map(
               (s) => DropdownMenuItem(value: s, child: Text(s)),
             ),
           ],
@@ -153,7 +153,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
   TableRow _tableHeader() {
     return TableRow(
       decoration: const BoxDecoration(color: AppColors.hover),
-      children: ['Nombre', 'Ciudad / Estado', 'Precio/noche', 'Rating', 'Estado', 'Acciones']
+      children: ['Nombre', 'Ciudad / Provincia', 'Precio/noche', 'Rating', 'Estado', 'Acciones']
           .map((h) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Text(h,
@@ -212,7 +212,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Text('\$${place.pricePerNight.toStringAsFixed(0)}',
+          child: Text('RD\$${place.pricePerNight.toStringAsFixed(0)}',
               style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.success)),
         ),
         Padding(

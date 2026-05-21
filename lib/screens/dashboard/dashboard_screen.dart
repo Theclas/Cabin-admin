@@ -130,7 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: Text(place['name'] ?? '', style: const TextStyle(fontSize: 13)),
             subtitle: Text(place['city'] ?? '', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
             trailing: Text(
-              '\$${((place['pricePerNight'] as num?)?.toStringAsFixed(0)) ?? '0'}',
+              'RD\$${((place['pricePerNight'] as num?)?.toStringAsFixed(0)) ?? '0'}',
               style: const TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w600),
             ),
           );
@@ -195,7 +195,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildByState(DashboardProvider p) {
     return _Card(
-      title: 'Lugares por estado',
+      title: 'Lugares por provincia',
       child: Column(
         children: p.byState.take(6).map((item) {
           final count = item['count'] as int;

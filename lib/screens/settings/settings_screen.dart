@@ -13,7 +13,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _maintenanceMode = false;
   bool _allowNewRegistrations = true;
   bool _requireEmailVerification = false;
-  final _supportEmailCtrl = TextEditingController(text: 'soporte@cabin.mx');
+  final _supportEmailCtrl = TextEditingController(text: 'soporte@cabin.do');
   final _appVersionCtrl = TextEditingController(text: '1.0.0');
 
   @override

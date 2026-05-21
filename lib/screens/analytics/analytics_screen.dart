@@ -102,7 +102,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Distribución por estado', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          const Text('Distribución por provincia', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
           const SizedBox(height: 16),
           SizedBox(
             height: 220,
