@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Cabin Admin Panel">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Cabin Admin">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Cabin Admin</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #0F0F1A;
+    }
+    #loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #0F0F1A;
+      color: #B8B8C8;
+      font-family: Inter, sans-serif;
+    }
+    #loading svg {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+    }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(139,47,191,0.3);
+      border-top-color: #8B2FBF;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-top: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="20" fill="url(#grad)"/>
+      <path d="M20 65 L50 30 L80 65 Z" fill="white" opacity="0.9"/>
+      <rect x="35" y="55" width="30" height="20" rx="2" fill="white" opacity="0.9"/>
+      <defs>
+        <linearGradient id="grad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#8B2FBF"/>
+          <stop offset="1" stop-color="#E91E63"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <span style="font-size:20px;font-weight:700;color:#fff">Cabin Admin</span>
+    <div class="spinner"></div>
+  </div>
+  <script src="flutter_bootstrap.js" async></script>
+  <script>
+    window.addEventListener('flutter-first-frame', function() {
+      var loading = document.getElementById('loading');
+      if (loading) loading.style.display = 'none';
+    });
+  </script>
+</body>
+</html>

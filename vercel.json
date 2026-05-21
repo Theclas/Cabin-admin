@@ -1,6 +1,7 @@
 {
-  "buildCommand": "echo 'Flutter build handled separately'",
   "outputDirectory": "build/web",
+  "buildCommand": null,
+  "installCommand": null,
   "framework": null,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
@@ -8,6 +9,10 @@
   "headers": [
     {
       "source": "/flutter_bootstrap.js",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    },
+    {
+      "source": "/flutter.js",
       "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
     },
     {
