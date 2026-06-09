@@ -34,6 +34,8 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
   final _descCtrl = TextEditingController();
   final _addressCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
+  final _phoneCtrl = TextEditingController();
+  final _whatsappCtrl = TextEditingController();
   final _latCtrl = TextEditingController();
   final _lngCtrl = TextEditingController();
 
@@ -76,6 +78,8 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
     _descCtrl.dispose();
     _addressCtrl.dispose();
     _priceCtrl.dispose();
+    _phoneCtrl.dispose();
+    _whatsappCtrl.dispose();
     _latCtrl.dispose();
     _lngCtrl.dispose();
     super.dispose();
@@ -90,6 +94,8 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
         _descCtrl.text = place.description;
         _addressCtrl.text = place.address;
         _priceCtrl.text = place.pricePerNight.toStringAsFixed(0);
+        _phoneCtrl.text = place.phone;
+        _whatsappCtrl.text = place.whatsapp;
         _type = place.type;
         _city = place.city;
         _province = place.state;
@@ -176,6 +182,8 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
           _newPhotoBytes, AppConfig.storagePlaces, 'jpg');
       final allPhotos = [..._existingPhotos, ...newUrls];
 
+      final price = double.tryParse(_priceCtrl.text) ?? 0;
+      final geo = GeoPoint(_lat, _lng);
       final data = {
         'name': _nameCtrl.text.trim(),
         'description': _descCtrl.text.trim(),
@@ -183,13 +191,19 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
         'address': _addressCtrl.text.trim(),
         'city': _city,
         'state': _province,
-        'geopoint': GeoPoint(_lat, _lng),
-        'location': {'city': _city, 'state': _province},
+        'phone': _phoneCtrl.text.trim(),
+        'whatsapp': _whatsappCtrl.text.trim(),
+        'geopoint': geo,
+        'location': geo,
         'photos': allPhotos,
         'amenities': _amenities,
-        'pricePerNight': double.tryParse(_priceCtrl.text) ?? 0,
+        'pricePerNight': price,
+        'priceMin': price,
+        'priceMax': price,
         'isActive': _isActive,
+        'active': _isActive,
         'isFeatured': _isFeatured,
+        'featured': _isFeatured,
         'is24h': _is24h,
         'extras': {},
       };
@@ -389,6 +403,38 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
             ),
             maxLines: 4,
             validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
+          ),
+        ]),
+        const SizedBox(height: 16),
+
+        // ── Contacto ────────────────────────────────────────────────
+        _section('Contacto', [
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _phoneCtrl,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Teléfono',
+                    hintText: '+1 809 000 0000',
+                    prefixIcon: Icon(Icons.phone_outlined),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TextFormField(
+                  controller: _whatsappCtrl,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'WhatsApp',
+                    hintText: '+1 809 000 0000',
+                    prefixIcon: Icon(Icons.chat_outlined),
+                  ),
+                ),
+              ),
+            ],
           ),
         ]),
         const SizedBox(height: 16),

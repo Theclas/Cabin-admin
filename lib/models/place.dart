@@ -8,6 +8,8 @@ class Place {
   final String address;
   final String city;
   final String state;
+  final String phone;
+  final String whatsapp;
   final double lat;
   final double lng;
   final List<String> photos;
@@ -30,6 +32,8 @@ class Place {
     required this.address,
     required this.city,
     required this.state,
+    this.phone = '',
+    this.whatsapp = '',
     required this.lat,
     required this.lng,
     required this.photos,
@@ -57,6 +61,8 @@ class Place {
       address: data['address'] ?? '',
       city: data['city'] ?? loc?['city'] ?? '',
       state: data['state'] ?? loc?['state'] ?? '',
+      phone: data['phone'] ?? '',
+      whatsapp: data['whatsapp'] ?? '',
       lat: geo?.latitude ?? (data['lat'] as num?)?.toDouble() ?? 0,
       lng: geo?.longitude ?? (data['lng'] as num?)?.toDouble() ?? 0,
       photos: List<String>.from(data['photos'] ?? []),
@@ -81,14 +87,22 @@ class Place {
         'city': city,
         'state': state,
         'geopoint': GeoPoint(lat, lng),
-        'location': {'city': city, 'state': state},
+        'location': GeoPoint(lat, lng),
+        'phone': phone,
+        'whatsapp': whatsapp,
         'photos': photos,
         'amenities': amenities,
         'pricePerNight': pricePerNight,
+        'priceMin': pricePerNight,
+        'priceMax': pricePerNight,
         'rating': rating,
+        'ratingAverage': rating,
         'reviewCount': reviewCount,
+        'ratingCount': reviewCount,
         'isActive': isActive,
+        'active': isActive,
         'isFeatured': isFeatured,
+        'featured': isFeatured,
         'ownerId': ownerId,
         'createdAt': Timestamp.fromDate(createdAt),
         'updatedAt': Timestamp.fromDate(updatedAt),
