@@ -2,20 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/places_service.dart';
 import '../../theme/app_colors.dart';
 import '../../config/routes.dart';
 
 class AdminSidebar extends StatelessWidget {
   const AdminSidebar({super.key});
 
+  // Stream compartido del conteo de pendientes (badge en vivo).
+  static final Stream<int> _pendingStream =
+      PlacesService().pendingCount().asBroadcastStream();
+
   static const _items = [
     _NavItem(icon: Icons.dashboard_rounded, label: 'Dashboard', route: AppRoutes.dashboard),
     _NavItem(icon: Icons.cabin_rounded, label: 'Lugares', route: AppRoutes.places),
+    _NavItem(icon: Icons.pending_actions_rounded, label: 'Pendientes', route: AppRoutes.pendientes),
     _NavItem(icon: Icons.people_rounded, label: 'Usuarios', route: AppRoutes.users),
     _NavItem(icon: Icons.star_rounded, label: 'Reseñas', route: AppRoutes.reviews),
     _NavItem(icon: Icons.flag_rounded, label: 'Reportes', route: AppRoutes.reports),
     _NavItem(icon: Icons.local_offer_rounded, label: 'Promociones', route: AppRoutes.promotions),
     _NavItem(icon: Icons.bar_chart_rounded, label: 'Analíticas', route: AppRoutes.analytics),
+    _NavItem(icon: Icons.campaign_rounded, label: 'Anuncios Popup', route: AppRoutes.popupAds),
+    _NavItem(icon: Icons.monetization_on_rounded, label: 'AdMob', route: AppRoutes.ads),
     _NavItem(icon: Icons.settings_rounded, label: 'Configuración', route: AppRoutes.settings),
   ];
 
@@ -41,7 +49,11 @@ class AdminSidebar extends StatelessWidget {
               itemBuilder: (_, i) {
                 final item = _items[i];
                 final active = location.startsWith(item.route);
-                return _NavTile(item: item, active: active);
+                return _NavTile(
+                  item: item,
+                  active: active,
+                  badgeStream: item.route == AppRoutes.pendientes ? _pendingStream : null,
+                );
               },
             ),
           ),
@@ -134,7 +146,8 @@ class _NavItem {
 class _NavTile extends StatefulWidget {
   final _NavItem item;
   final bool active;
-  const _NavTile({required this.item, required this.active});
+  final Stream<int>? badgeStream;
+  const _NavTile({required this.item, required this.active, this.badgeStream});
 
   @override
   State<_NavTile> createState() => _NavTileState();
@@ -182,6 +195,28 @@ class _NavTileState extends State<_NavTile> {
                   fontSize: 14,
                 ),
               ),
+              if (widget.badgeStream != null) ...[
+                const Spacer(),
+                StreamBuilder<int>(
+                  stream: widget.badgeStream,
+                  builder: (_, snap) {
+                    final count = snap.data ?? 0;
+                    if (count <= 0) return const SizedBox.shrink();
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.error,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        count > 99 ? '99+' : '$count',
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ],
           ),
         ),

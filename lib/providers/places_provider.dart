@@ -22,7 +22,9 @@ class PlacesProvider extends ChangeNotifier {
   bool? get filterActive => _filterActive;
 
   List<Place> get _filtered {
-    var list = _places;
+    // La lista normal "Lugares" solo muestra aprobados (los pending/rejected
+    // viven en la sección "Pendientes"). Así no se rompe la vista existente.
+    var list = _places.where((p) => p.status != 'pending' && p.status != 'rejected').toList();
     if (_search.isNotEmpty) {
       final q = _search.toLowerCase();
       list = list.where((p) =>

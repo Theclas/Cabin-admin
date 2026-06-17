@@ -20,12 +20,14 @@ class AppConfig {
   static const String colLegal = 'legal';
   static const String colConfig = 'config';
   static const String colAds = 'ads_config';
+  static const String colPopupAds = 'popup_ads';
   static const String colAdminLogs = 'admin_logs';
 
   // Storage paths
   static const String storagePlaces = 'places';
   static const String storagePromotions = 'promotions';
   static const String storageUsers = 'users';
+  static const String storagePopupAds = 'popup_ads';
 
   // Pagination
   static const int pageSize = 20;

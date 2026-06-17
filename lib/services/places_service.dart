@@ -27,9 +27,52 @@ class PlacesService {
     data['updatedAt'] = Timestamp.now();
     data['rating'] = 0.0;
     data['reviewCount'] = 0;
+    // Lo creado desde el admin nace aprobado (su flujo no cambia).
+    data['status'] ??= 'approved';
+    data['source'] ??= 'admin';
     final ref = await _col.add(data);
     return ref.id;
   }
+
+  /// Stream en tiempo real de los lugares enviados por usuarios (status='pending'),
+  /// ordenados por fecha de envío (más recientes primero). Orden en cliente para
+  /// no requerir índice compuesto.
+  Stream<List<Place>> watchPending() => _col
+      .where('status', isEqualTo: 'pending')
+      .snapshots()
+      .map((s) {
+        final list = s.docs.map(Place.fromFirestore).toList();
+        list.sort((a, b) => (b.submittedAt ?? b.createdAt)
+            .compareTo(a.submittedAt ?? a.createdAt));
+        return list;
+      });
+
+  /// Conteo en vivo de pendientes (para el badge del sidebar).
+  Stream<int> pendingCount() =>
+      _col.where('status', isEqualTo: 'pending').snapshots().map((s) => s.size);
+
+  /// Aprueba un lugar: pasa a 'approved' y se vuelve visible (isActive=true).
+  Future<void> approve(String id, String reviewerUid) =>
+      _col.doc(id).update({
+        'status': 'approved',
+        'isActive': true,
+        'active': true,
+        'reviewedBy': reviewerUid,
+        'reviewedAt': Timestamp.now(),
+        'updatedAt': Timestamp.now(),
+      });
+
+  /// Rechaza un lugar: queda 'rejected' y oculto (isActive=false), con motivo.
+  Future<void> reject(String id, String reviewerUid, String reason) =>
+      _col.doc(id).update({
+        'status': 'rejected',
+        'isActive': false,
+        'active': false,
+        'reviewedBy': reviewerUid,
+        'reviewedAt': Timestamp.now(),
+        'rejectionReason': reason,
+        'updatedAt': Timestamp.now(),
+      });
 
   Future<void> update(String id, Map<String, dynamic> data) async {
     data['updatedAt'] = Timestamp.now();

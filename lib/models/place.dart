@@ -23,6 +23,15 @@ class Place {
   final DateTime createdAt;
   final DateTime updatedAt;
   final Map<String, dynamic> extras;
+  // Moderación / "Registra tu lugar"
+  final String status; // 'approved' | 'pending' | 'rejected'
+  final String? submittedBy;
+  final String submittedByName;
+  final DateTime? submittedAt;
+  final String? reviewedBy;
+  final DateTime? reviewedAt;
+  final String rejectionReason;
+  final String source; // 'admin' | 'google_places' | 'user_submission'
 
   const Place({
     required this.id,
@@ -47,6 +56,14 @@ class Place {
     required this.createdAt,
     required this.updatedAt,
     required this.extras,
+    this.status = 'approved',
+    this.submittedBy,
+    this.submittedByName = '',
+    this.submittedAt,
+    this.reviewedBy,
+    this.reviewedAt,
+    this.rejectionReason = '',
+    this.source = 'admin',
   });
 
   factory Place.fromFirestore(DocumentSnapshot doc) {
@@ -76,6 +93,14 @@ class Place {
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       extras: Map<String, dynamic>.from(data['extras'] ?? {}),
+      status: data['status'] ?? 'approved',
+      submittedBy: data['submittedBy'],
+      submittedByName: data['submittedByName'] ?? '',
+      submittedAt: (data['submittedAt'] as Timestamp?)?.toDate(),
+      reviewedBy: data['reviewedBy'],
+      reviewedAt: (data['reviewedAt'] as Timestamp?)?.toDate(),
+      rejectionReason: data['rejectionReason'] ?? '',
+      source: data['source'] ?? 'admin',
     );
   }
 
@@ -107,6 +132,7 @@ class Place {
         'createdAt': Timestamp.fromDate(createdAt),
         'updatedAt': Timestamp.fromDate(updatedAt),
         'extras': extras,
+        'status': status,
       };
 
   Place copyWith({
