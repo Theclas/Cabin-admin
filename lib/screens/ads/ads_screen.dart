@@ -14,9 +14,12 @@ class AdsScreen extends StatefulWidget {
 class _AdsScreenState extends State<AdsScreen> {
   final _androidCtrl = TextEditingController();
   final _iosCtrl = TextEditingController();
+  final _androidInterCtrl = TextEditingController();
+  final _iosInterCtrl = TextEditingController();
 
   bool _enabled = true;
   bool _bannerEnabled = true;
+  bool _interstitialEnabled = false;
   bool _testMode = false;
   bool _loading = true;
   bool _saving = false;
@@ -41,6 +44,9 @@ class _AdsScreenState extends State<AdsScreen> {
           _testMode = d['testMode'] as bool? ?? false;
           _androidCtrl.text = d['androidAdUnitId'] as String? ?? '';
           _iosCtrl.text = d['iosAdUnitId'] as String? ?? '';
+          _interstitialEnabled = d['interstitialEnabled'] as bool? ?? false;
+          _androidInterCtrl.text = d['androidInterstitialId'] as String? ?? '';
+          _iosInterCtrl.text = d['iosInterstitialId'] as String? ?? '';
         });
       }
     } catch (_) {}
@@ -58,9 +64,12 @@ class _AdsScreenState extends State<AdsScreen> {
         'bannerEnabled': _bannerEnabled,
         'androidAdUnitId': _androidCtrl.text.trim(),
         'iosAdUnitId': _iosCtrl.text.trim(),
+        'interstitialEnabled': _interstitialEnabled,
+        'androidInterstitialId': _androidInterCtrl.text.trim(),
+        'iosInterstitialId': _iosInterCtrl.text.trim(),
         'testMode': _testMode,
         'updatedAt': FieldValue.serverTimestamp(),
-      });
+      }, SetOptions(merge: true));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -128,6 +137,8 @@ class _AdsScreenState extends State<AdsScreen> {
           const SizedBox(height: 16),
           _buildBannerSection(),
           const SizedBox(height: 16),
+          _buildInterstitialSection(),
+          const SizedBox(height: 16),
           _buildComingSoon(),
         ],
       ),
@@ -149,8 +160,8 @@ class _AdsScreenState extends State<AdsScreen> {
           const SizedBox(width: 12),
           const Expanded(
             child: Text(
-              'Solo el banner inferior está activo. '
-              'Para no saturar la experiencia, no se usan intersticiales ni anuncios nativos.',
+              'Banner inferior + intersticial (controlado por frecuencia) activos. '
+              'Los intersticiales aparecen con moderación para no saturar la experiencia.',
               style:
                   TextStyle(color: AppColors.success, fontSize: 13),
             ),
@@ -261,6 +272,61 @@ class _AdsScreenState extends State<AdsScreen> {
     );
   }
 
+  Widget _buildInterstitialSection() {
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.fullscreen_rounded,
+                  color: AppColors.info, size: 20),
+              const SizedBox(width: 10),
+              const Text('Intersticial',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: AppColors.textPrimary)),
+              const Spacer(),
+              Switch(
+                value: _interstitialEnabled,
+                onChanged: _enabled
+                    ? (v) => setState(() => _interstitialEnabled = v)
+                    : null,
+                activeColor: AppColors.primary,
+              ),
+            ],
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text(
+              'Pantalla completa al abrir el detalle de un lugar (1 de cada 3, '
+              'con pausa mínima). Si el ID de una plataforma está vacío, no se '
+              'muestra en esa plataforma.',
+              style: TextStyle(color: AppColors.textHint, fontSize: 12),
+            ),
+          ),
+          const Divider(color: AppColors.border, height: 24),
+          _field(
+            controller: _androidInterCtrl,
+            label: 'Intersticial AdUnit ID — Android',
+            hint: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
+            icon: Icons.android_rounded,
+            enabled: _enabled && _interstitialEnabled,
+          ),
+          const SizedBox(height: 12),
+          _field(
+            controller: _iosInterCtrl,
+            label: 'Intersticial AdUnit ID — iOS',
+            hint: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
+            icon: Icons.apple_rounded,
+            enabled: _enabled && _interstitialEnabled,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildComingSoon() {
     return _card(
       child: Column(
@@ -279,7 +345,6 @@ class _AdsScreenState extends State<AdsScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          _comingSoonItem('Intersticiales'),
           _comingSoonItem('Anuncios nativos'),
           _comingSoonItem('Recompensados'),
         ],
@@ -337,6 +402,8 @@ class _AdsScreenState extends State<AdsScreen> {
   void dispose() {
     _androidCtrl.dispose();
     _iosCtrl.dispose();
+    _androidInterCtrl.dispose();
+    _iosInterCtrl.dispose();
     super.dispose();
   }
 }
